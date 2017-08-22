@@ -12,7 +12,7 @@ import UIKit
 class TableViewController: UITableViewController {
 
     @IBOutlet weak var segmentControl: UISegmentedControl!
-    @IBAction func segmentControlAction(sender: AnyObject) {
+    @IBAction func segmentControlAction(_ sender: AnyObject) {
         self.tableView.reloadData()
     }
     
@@ -33,7 +33,7 @@ class TableViewController: UITableViewController {
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         
         if segmentControl.selectedSegmentIndex == 0 { //Regular list of Buildings
             return buildingModel.numberOfBuildingSections()
@@ -43,7 +43,7 @@ class TableViewController: UITableViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if segmentControl.selectedSegmentIndex == 0 {
             return buildingModel.numberOfBuildingsInSection(section)
@@ -54,8 +54,8 @@ class TableViewController: UITableViewController {
     }
 
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("BuildingCell", forIndexPath: indexPath) as! BuildingCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         
         if segmentControl.selectedSegmentIndex == 0 {
             
@@ -63,12 +63,12 @@ class TableViewController: UITableViewController {
             
             cell.nameLabel.text = building.name
             cell.indexPath = indexPath
-            cell.favoriteButton.hidden = false
+            cell.favoriteButton.isHidden = false
             
             if building.isFavorite {
-                cell.favoriteButton.setImage(UIImage(named: "star_fill"), forState: .Normal)
+                cell.favoriteButton.setImage(UIImage(named: "star_fill"), for: UIControlState())
             }else {
-                cell.favoriteButton.setImage(UIImage(named: "star_empty"), forState: .Normal)
+                cell.favoriteButton.setImage(UIImage(named: "star_empty"), for: UIControlState())
             }
             
             return cell
@@ -76,7 +76,7 @@ class TableViewController: UITableViewController {
         }else {
             let building = buildingModel.favoriteBuildingAtIndex(indexPath.row)
             cell.nameLabel.text = building.name
-            cell.favoriteButton.hidden = true
+            cell.favoriteButton.isHidden = true
             
             return cell
         }
@@ -84,45 +84,45 @@ class TableViewController: UITableViewController {
     }
     
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if segmentControl.selectedSegmentIndex == 0 {
             return buildingModel.titleForSection(section)
         }else{return nil}
     }
     
-    override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         if segmentControl.selectedSegmentIndex == 0 {
             return buildingModel.indexTitle()
         }else{ return nil}
     }
     
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
         if segmentControl.selectedSegmentIndex == 1 {
-            if editingStyle == UITableViewCellEditingStyle.Delete {
+            if editingStyle == UITableViewCellEditingStyle.delete {
                 buildingModel.removeFavoriteBuildingAtIndex(indexPath.row)
-                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
+                tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.automatic)
             }
         }
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if segmentControl.selectedSegmentIndex == 0 {
             let building = buildingModel.buildingAtIndexPath(indexPath)
-            performSegueWithIdentifier("BuildingInfoSegue", sender:building)
+            performSegue(withIdentifier: "BuildingInfoSegue", sender:building)
         }else {
             let building = buildingModel.favoriteBuildingAtIndex(indexPath.row)
-            performSegueWithIdentifier("BuildingInfoSegue", sender:building)
+            performSegue(withIdentifier: "BuildingInfoSegue", sender:building)
         }
         
     }
     
     
    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let building = sender as? Building{
             if segue.identifier == "BuildingInfoSegue" {
-                let infoVC = segue.destinationViewController as! InfoViewController
+                let infoVC = segue.destination as! InfoViewController
                 infoVC.configureInfoWithBuilding(building)
             }
         }

@@ -33,10 +33,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     var selectedBuilding:Building?
     var userLocation:CLLocation?
     
-    var locationEnabledButton = UIButton(type: .Custom)
-    var locationDisabledButton = UIButton(type: .Custom)
-    var favoritesEnabledButton = UIButton(type: .Custom)
-    var favoritesDisabledButton = UIButton(type: .Custom)
+    var locationEnabledButton = UIButton(type: .custom)
+    var locationDisabledButton = UIButton(type: .custom)
+    var favoritesEnabledButton = UIButton(type: .custom)
+    var favoritesDisabledButton = UIButton(type: .custom)
     
     @IBOutlet weak var locationButton: UIBarButtonItem!
     @IBOutlet weak var favoritesButton: UIBarButtonItem!
@@ -59,12 +59,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {
-            case .Denied:
+            case .denied:
                 self.locationManager.stopUpdatingLocation()
                 self.locationManager.startUpdatingHeading()
                 self.locationButton.tag = 0
-                self.locationButton.enabled = false
-            case .NotDetermined:
+                self.locationButton.isEnabled = false
+            case .notDetermined:
                 locationManager.requestWhenInUseAuthorization()
             default:
                 self.locationManager.startUpdatingLocation()
@@ -88,33 +88,33 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     func setupToolBarButtons()
     {
         
-        locationEnabledButton.frame = CGRectMake(0, 0, kToolBarButtonLenght, kToolBarButtonLenght)
-        locationDisabledButton.frame = CGRectMake(0, 0, kToolBarButtonLenght, kToolBarButtonLenght)
-        favoritesEnabledButton.frame = CGRectMake(0, 0, kToolBarButtonLenght, kToolBarButtonLenght)
-        favoritesDisabledButton.frame = CGRectMake(0, 0, kToolBarButtonLenght, kToolBarButtonLenght)
+        locationEnabledButton.frame = CGRect(x: 0, y: 0, width: kToolBarButtonLenght, height: kToolBarButtonLenght)
+        locationDisabledButton.frame = CGRect(x: 0, y: 0, width: kToolBarButtonLenght, height: kToolBarButtonLenght)
+        favoritesEnabledButton.frame = CGRect(x: 0, y: 0, width: kToolBarButtonLenght, height: kToolBarButtonLenght)
+        favoritesDisabledButton.frame = CGRect(x: 0, y: 0, width: kToolBarButtonLenght, height: kToolBarButtonLenght)
         
-        locationEnabledButton.setImage(UIImage(named: "arrow_filled"), forState: .Normal)
-        locationEnabledButton.addTarget(self, action: #selector(MapViewController.hideUserLocation), forControlEvents: .TouchDown)
+        locationEnabledButton.setImage(UIImage(named: "arrow_filled"), for: UIControlState())
+        locationEnabledButton.addTarget(self, action: #selector(MapViewController.hideUserLocation), for: .touchDown)
         
-        locationDisabledButton.setImage(UIImage(named: "arrow_empty"), forState: .Normal)
-        locationDisabledButton.addTarget(self, action: #selector(MapViewController.showUserLocation), forControlEvents: .TouchDown)
+        locationDisabledButton.setImage(UIImage(named: "arrow_empty"), for: UIControlState())
+        locationDisabledButton.addTarget(self, action: #selector(MapViewController.showUserLocation), for: .touchDown)
         
-        favoritesEnabledButton.setImage(UIImage(named:"full_star"), forState: .Normal)
-        favoritesEnabledButton.addTarget(self, action: #selector(MapViewController.hideFavoritePins), forControlEvents: .TouchDown)
+        favoritesEnabledButton.setImage(UIImage(named:"full_star"), for: UIControlState())
+        favoritesEnabledButton.addTarget(self, action: #selector(MapViewController.hideFavoritePins), for: .touchDown)
         
-        favoritesDisabledButton.setImage(UIImage(named:"empty_star"), forState: .Normal)
-        favoritesDisabledButton.addTarget(self, action: #selector(MapViewController.showFavoritePins), forControlEvents: .TouchDown)
+        favoritesDisabledButton.setImage(UIImage(named:"empty_star"), for: UIControlState())
+        favoritesDisabledButton.addTarget(self, action: #selector(MapViewController.showFavoritePins), for: .touchDown)
         
         favoritesButton.customView = favoritesEnabledButton
         locationButton.customView = locationEnabledButton
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         //If app is coming from favorites it needs to recheck and reload the favorite pins
         updateMapView()
         
-        let prefs = NSUserDefaults.standardUserDefaults()
-        let favoritesEnabled = prefs.boolForKey(UserDefaults.FavsEnabled)
+        let prefs = Foundation.UserDefaults.standard
+        let favoritesEnabled = prefs.bool(forKey: UserDefaults.FavsEnabled)
         if favoritesEnabled {
             showFavoritePins()
         }else {
@@ -122,7 +122,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
         
         
-        let locationEnabled = prefs.boolForKey(UserDefaults.LocationEnabled)
+        let locationEnabled = prefs.bool(forKey: UserDefaults.LocationEnabled)
         if locationEnabled {
             showUserLocation()
         }else {
@@ -133,18 +133,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func updateMapView()
     {
-        let prefs = NSUserDefaults.standardUserDefaults()
-        let mapType = prefs.integerForKey(UserDefaults.MapType)
+        let prefs = Foundation.UserDefaults.standard
+        let mapType = prefs.integer(forKey: UserDefaults.MapType)
         
         switch mapType {
         case 0:
-            mapView.mapType = .Standard
+            mapView.mapType = .standard
         case 1:
-            mapView.mapType = .Satellite
+            mapView.mapType = .satellite
         case 2:
-            mapView.mapType = .Hybrid
+            mapView.mapType = .hybrid
         default:
-            mapView.mapType = .Standard
+            mapView.mapType = .standard
         }
         
     }
@@ -168,11 +168,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     //MARK: -Map View Delegate
     
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
         if annotation is Building {
             let building = annotation as! Building
-            let pinColor = (building.isFavorite) ? UIColor.yellowColor() : UIColor.blueColor()
+            let pinColor = (building.isFavorite) ? UIColor.yellow : UIColor.blue
             
             let identifier = "BuildingPin"
             var view: MKPinAnnotationView
@@ -182,14 +182,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             view.canShowCallout = true
             view.pinTintColor = pinColor
             view.animatesDrop = true
-            view.draggable = true
+            view.isDraggable = true
             
             if !building.isFavorite {
-                let removeButton = UIButton(type: .Custom)
-                removeButton.setImage(UIImage(named: "trash"), forState: .Normal)
+                let removeButton = UIButton(type: .custom)
+                removeButton.setImage(UIImage(named: "trash"), for: UIControlState())
                 removeButton.frame = CGRect(x: 0.0, y: 0.0, width: KButtonLegnth, height: KButtonLegnth)
 
-                removeButton.addTarget(self, action: #selector(MapViewController.removePin(_:)), forControlEvents: .TouchUpInside)
+                removeButton.addTarget(self, action: #selector(MapViewController.removePin(_:)), for: .touchUpInside)
                 view.rightCalloutAccessoryView = removeButton
             }
             
@@ -200,7 +200,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
     
-    func removePin(sender:AnyObject)
+    func removePin(_ sender:AnyObject)
     {
         let buildingToRemove = mapView.selectedAnnotations.first as! Building
         mapView.removeAnnotation(buildingToRemove)
@@ -222,8 +222,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         mapView.addAnnotations(buildingModel.favoriteBuildings)
         favoritesButton.customView = favoritesEnabledButton
         
-        let prefs = NSUserDefaults.standardUserDefaults()
-        prefs.setBool(true, forKey: UserDefaults.FavsEnabled)
+        let prefs = Foundation.UserDefaults.standard
+        prefs.set(true, forKey: UserDefaults.FavsEnabled)
     }
     
     func hideFavoritePins()
@@ -231,8 +231,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         mapView.removeAnnotations(buildingModel.favoriteBuildings)
         favoritesButton.customView = favoritesDisabledButton
         
-        let prefs = NSUserDefaults.standardUserDefaults()
-        prefs.setBool(false, forKey: UserDefaults.FavsEnabled)
+        let prefs = Foundation.UserDefaults.standard
+        prefs.set(false, forKey: UserDefaults.FavsEnabled)
     }
     
     func displayPins()
@@ -246,7 +246,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
   
     
-    func addPinForBuilding(building:Building)
+    func addPinForBuilding(_ building:Building)
     {
         let span = MKCoordinateSpan(latitudeDelta: kPinSpanLat, longitudeDelta: kPinSpanLong)
         let region = MKCoordinateRegion(center: building.coordinate, span: span)
@@ -256,15 +256,15 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     }
     
 
-    @IBAction func buildingPinSegue(segue:UIStoryboardSegue) {
-        if let infoVC = segue.sourceViewController as? InfoViewController {
+    @IBAction func buildingPinSegue(_ segue:UIStoryboardSegue) {
+        if let infoVC = segue.source as? InfoViewController {
             let building = infoVC.building!
             addPinForBuilding(building)
         }
     }
     
-    @IBAction func showPinSegue(segue:UIStoryboardSegue){
-        if let infoVC = segue.sourceViewController as? InfoViewController {
+    @IBAction func showPinSegue(_ segue:UIStoryboardSegue){
+        if let infoVC = segue.source as? InfoViewController {
             let building = infoVC.building!
             let span = MKCoordinateSpan(latitudeDelta: kPinSpanLat, longitudeDelta: kPinSpanLong)
             let region = MKCoordinateRegion(center: building.coordinate, span: span)
@@ -275,19 +275,19 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     //MARK:- Location Methods
     
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
          self.userLocation = locations.first
     }
     
-    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if status == .AuthorizedWhenInUse || status == .AuthorizedAlways{
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse || status == .authorizedAlways{
             self.locationManager.startUpdatingLocation()
             self.locationManager.startUpdatingHeading()
-            self.locationButton.enabled = true
+            self.locationButton.isEnabled = true
             self.locationButton.tag = 1
 
         } else {
-            self.locationButton.enabled = false
+            self.locationButton.isEnabled = false
             self.locationButton.tag = 0
             self.locationManager.stopUpdatingHeading()
             self.locationManager.stopUpdatingLocation()
@@ -300,9 +300,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func checkLocationPrefs()
     {
-        let prefs = NSUserDefaults.standardUserDefaults()
+        let prefs = Foundation.UserDefaults.standard
         
-        let locationEnabled = prefs.boolForKey(UserDefaults.LocationEnabled)
+        let locationEnabled = prefs.bool(forKey: UserDefaults.LocationEnabled)
         if locationEnabled {
             showUserLocation()
         }else {
@@ -310,7 +310,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     }
     
-    func zoomToUserLocation(location:CLLocation)
+    func zoomToUserLocation(_ location:CLLocation)
     {
         let span = MKCoordinateSpan(latitudeDelta: kPinSpanLat, longitudeDelta: kPinSpanLong)
         
@@ -326,8 +326,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
         locationButton.customView = locationEnabledButton
         
-        let prefs = NSUserDefaults.standardUserDefaults()
-        prefs.setBool(true, forKey: UserDefaults.LocationEnabled)
+        let prefs = Foundation.UserDefaults.standard
+        prefs.set(true, forKey: UserDefaults.LocationEnabled)
     }
     
     func hideUserLocation()
@@ -336,12 +336,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         locationManager.stopUpdatingLocation()
         locationButton.customView = locationDisabledButton
         
-        let prefs = NSUserDefaults.standardUserDefaults()
-        prefs.setBool(false, forKey: UserDefaults.LocationEnabled)
+        let prefs = Foundation.UserDefaults.standard
+        prefs.set(false, forKey: UserDefaults.LocationEnabled)
     }
     
     
-    @IBAction func dimissDirections(segue:UIStoryboardSegue){
+    @IBAction func dimissDirections(_ segue:UIStoryboardSegue){
         getDirections()
     }
     
@@ -350,13 +350,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         walkingRouteRequest.source = source
         walkingRouteRequest.destination = destination
-        walkingRouteRequest.transportType = .Walking
+        walkingRouteRequest.transportType = .walking
         walkingRouteRequest.requestsAlternateRoutes = false
         
         let directions = MKDirections(request: walkingRouteRequest)
-        directions.calculateDirectionsWithCompletionHandler { (response, error) in
+        directions.calculate { (response, error) in
             if error != nil {
-                assert(false, "Error getting directions.")
+//                assert(false, "Error getting directions.")
+                let alertController = UIAlertController(title: "Oops", message: "Could not get directions!", preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+                self.present(alertController, animated: true, completion: nil)
             } else {
                 self.showDirections(response!)
                 self.configureScrollView()
@@ -366,41 +369,41 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     }
     
-    func configureETA(response:MKDirectionsResponse)
+    func configureETA(_ response:MKDirectionsResponse)
     {
         let route = response.routes.first
         //Divide by 60 so its in minutes
         let eta = Int((route?.expectedTravelTime)!)/60
         
         
-        let startDate = NSDate()
-        let calendar = NSCalendar.currentCalendar()
-        let endDate = calendar.dateByAddingUnit(.Minute, value:eta , toDate: startDate, options: [])
+        let startDate = Date()
+        let calendar = Calendar.current
+        let endDate = (calendar as NSCalendar).date(byAdding: .minute, value:eta , to: startDate, options: [])
         
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "hh:mm a"
-        dateFormatter.locale = NSLocale.currentLocale()
+        dateFormatter.locale = Locale.current
         
-        let stringForEta = dateFormatter.stringFromDate(endDate!)
+        let stringForEta = dateFormatter.string(from: endDate!)
         
         self.navigationItem.title = "ETA:" + stringForEta
         
     }
     
-    func showDirections(response: MKDirectionsResponse) {
+    func showDirections(_ response: MKDirectionsResponse) {
         mapView.removeOverlays(mapView.overlays)
         
         let route = response.routes.first!
         
         stepByStepDirections = route.steps
         
-        mapView.addOverlay(route.polyline)
+        mapView.add(route.polyline)
         
         let region = MKCoordinateRegionMakeWithDistance(route.polyline.coordinate, kPolygonRegion, kPolygonRegion)
         mapView.setRegion(region, animated: true)
     }
     
-    func setSourceAndDestination(source:MKMapItem?, destination:MKMapItem?)
+    func setSourceAndDestination(_ source:MKMapItem?, destination:MKMapItem?)
     {
         if source == nil { //User location
             let placemark = MKPlacemark(coordinate: mapView.userLocation.coordinate, addressDictionary: nil)
@@ -417,11 +420,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     }
     
-    func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if overlay is MKPolyline {
             let polylineRenderer = MKPolylineRenderer(overlay: overlay)
             
-            polylineRenderer.strokeColor = UIColor.redColor()
+            polylineRenderer.strokeColor = UIColor.red
             polylineRenderer.lineWidth = 4.0
             return polylineRenderer
         }
@@ -429,8 +432,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         return MKOverlayRenderer()
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let directionsListVC = segue.destinationViewController as? DirectionsTableViewController
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let directionsListVC = segue.destination as? DirectionsTableViewController
         {
             directionsListVC.configueDirections(stepByStepDirections)
         }
@@ -452,8 +455,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             let contentSize = CGSize(width:width * CGFloat(horizontalPageCount), height: height)
             
             directionsScrollView.contentSize = contentSize
-            directionsScrollView.pagingEnabled = true
-            directionsScrollView.directionalLockEnabled = true
+            directionsScrollView.isPagingEnabled = true
+            directionsScrollView.isDirectionalLockEnabled = true
             directionsScrollView.bounces = false
             
             directionsScrollView.delegate = self
@@ -475,14 +478,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 let origin = CGPoint(x: xOffset,y: 0.0)
                 let frame = CGRect(origin: origin, size: size)
                 let pageView = UIView(frame: frame)
-                pageView.backgroundColor = UIColor.whiteColor()
+                pageView.backgroundColor = UIColor.white
                 
                 let step = directions[index].instructions
                 
                 let labelFrame = CGRect(x: 0.0, y: 0.0, width: size.width, height: 30.0)
                 let label = UILabel(frame: labelFrame)
-                label.textColor = UIColor.blackColor()
-                label.textAlignment = .Center
+                label.textColor = UIColor.black
+                label.textAlignment = .center
     
                 label.text = "\(index + 1).)\(step)"
                 pageView.addSubview(label)

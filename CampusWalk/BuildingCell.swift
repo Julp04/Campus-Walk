@@ -14,26 +14,26 @@ class BuildingCell: UITableViewCell {
     
     @IBOutlet weak var favoriteButton: UIButton!
     @IBOutlet weak var nameLabel: UILabel!
-    var indexPath:NSIndexPath?
+    var indexPath:IndexPath?
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-    @IBAction func addBuildingToFavorites(sender: AnyObject) {
+    @IBAction func addBuildingToFavorites(_ sender: AnyObject) {
         
         let building  = buildingModel.buildingAtIndexPath(indexPath!)
         
         if !buildingModel.addBuildingToFavorites(building) {
-            let index = buildingModel.favoriteBuildings.indexOf(building)
+            let index = buildingModel.favoriteBuildings.index(of: building)
             buildingModel.removeFavoriteBuildingAtIndex(index!)
-            favoriteButton.setImage(UIImage(named: "star_empty"), forState: .Normal)
+            favoriteButton.setImage(UIImage(named: "star_empty"), for: UIControlState())
         }else{
-            favoriteButton.setImage(UIImage(named: "star_fill"), forState: .Normal)
+            favoriteButton.setImage(UIImage(named: "star_fill"), for: UIControlState())
         }
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state

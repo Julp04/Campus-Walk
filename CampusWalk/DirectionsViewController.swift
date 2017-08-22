@@ -34,7 +34,7 @@ class DirectionsViewController: UIViewController, UITextFieldDelegate {
 
    //MARK: - Textfield Delegate
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         lastTappedField = textField
         textField.resignFirstResponder()
         textField.endEditing(true)
@@ -46,10 +46,10 @@ class DirectionsViewController: UIViewController, UITextFieldDelegate {
     
     
     
-    @IBAction func dismissList(segue: UIStoryboardSegue) {
+    @IBAction func dismissList(_ segue: UIStoryboardSegue) {
     }
     
-    func setTextField(building:Building)
+    func setTextField(_ building:Building)
     {
         lastTappedField?.text = building.name
         if lastTappedField?.tag == 0 {
@@ -64,31 +64,31 @@ class DirectionsViewController: UIViewController, UITextFieldDelegate {
     func displayActionAlert()
     {
         
-        let actionAlert = UIAlertController(title: "Select a Location", message: nil, preferredStyle: .ActionSheet)
+        let actionAlert = UIAlertController(title: "Select a Location", message: nil, preferredStyle: .actionSheet)
         actionAlert.popoverPresentationController?.sourceView = lastTappedField
         
-        let listOfBuildings = UIAlertAction(title: "List of buildings", style: .Default) { (action) in
-            self.performSegueWithIdentifier("ListSegue", sender: self)
+        let listOfBuildings = UIAlertAction(title: "List of buildings", style: .default) { (action) in
+            self.performSegue(withIdentifier: "ListSegue", sender: self)
         }
         
-        let currentLocation = UIAlertAction(title: "Current Location", style: .Default) { (action) in
+        let currentLocation = UIAlertAction(title: "Current Location", style: .default) { (action) in
             self.lastTappedField?.text = "Current Location"
         }
         
-        let cancel = UIAlertAction(title: "Cancel", style: .Cancel) { (action) in
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
             
         }
         
         
-        let prefs = NSUserDefaults.standardUserDefaults()
-        currentLocation.enabled = prefs.boolForKey(UserDefaults.LocationEnabled)
+        let prefs = Foundation.UserDefaults.standard
+        currentLocation.isEnabled = prefs.bool(forKey: UserDefaults.LocationEnabled)
         
         actionAlert.addAction(listOfBuildings)
         actionAlert.addAction(currentLocation)
         actionAlert.addAction(cancel)
         
         
-        self.presentViewController(actionAlert, animated: true, completion: nil)
+        self.present(actionAlert, animated: true, completion: nil)
     }
     
     
@@ -111,16 +111,16 @@ class DirectionsViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    @IBAction func getDirections(sender: AnyObject) {
+    @IBAction func getDirections(_ sender: AnyObject) {
         
         if !(toTextField.text?.isEmpty)! && !(fromTextField.text?.isEmpty)! {
             createMKMapItems()
-            self.performSegueWithIdentifier("DismissDirections", sender: self)
+            self.performSegue(withIdentifier: "DismissDirections", sender: self)
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let mapVC = segue.destinationViewController as? MapViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let mapVC = segue.destination as? MapViewController {
             mapVC.setSourceAndDestination(source, destination: destination)
         }
     }

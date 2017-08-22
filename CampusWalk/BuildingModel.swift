@@ -22,36 +22,36 @@ class BuildingModel
     var buildings = [String:[Building]]()
     
     let fileName = "buildings"
-    let buildingsURL:NSURL
+    let buildingsURL:URL
     
     static let sharedInstance = BuildingModel()
     
-    private init()
+    fileprivate init()
     {
-            let fileManager = NSFileManager.defaultManager()
-            let documentURL = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]
-            buildingsURL = documentURL.URLByAppendingPathComponent(fileName + ".archive")
+            let fileManager = FileManager.default
+            let documentURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            buildingsURL = documentURL.appendingPathComponent(fileName + ".archive")
             
-            let fileExists = fileManager.fileExistsAtPath(buildingsURL.path!)
+            let fileExists = fileManager.fileExists(atPath: buildingsURL.path)
             
             if fileExists {  // just read in the archive if it exists
-                archive = NSKeyedUnarchiver.unarchiveObjectWithFile(buildingsURL.path!)! as! Archive
+                archive = NSKeyedUnarchiver.unarchiveObject(withFile: buildingsURL.path)! as! Archive
                 buildings = archive.buildings
                 allBuildings = archive.allBuildings
                 
-                allKeys = Array(buildings.keys).sort()
+                allKeys = Array(buildings.keys).sorted()
             }
             else {  // first time launching app
                 
-                    let bundle = NSBundle.mainBundle()
-                    let srcURL = bundle.URLForResource(fileName, withExtension: "plist")!
+                    let bundle = Bundle.main
+                    let srcURL = bundle.url(forResource: fileName, withExtension: "plist")!
                     do {
-                        try  fileManager.copyItemAtURL(srcURL, toURL: buildingsURL)
+                        try  fileManager.copyItem(at: srcURL, to: buildingsURL)
                     } catch {
                         print("Error")
                     }
                     
-                    if let array = NSArray(contentsOfURL: srcURL) as? [AnyObject] {
+                    if let array = NSArray(contentsOf: srcURL) as [AnyObject]? {
                         for element in array {
                             let name = element["name"] as! String
                             let buildingCode = element["opp_bldg_code"] as! Int
@@ -75,15 +75,15 @@ class BuildingModel
                 
                 for (key, building) in buildings1 {
                     
-                    let sortedArray = building.sort({$0.name < $1.name})
+                    let sortedArray = building.sorted(by: {$0.name < $1.name})
                     buildings[key] = sortedArray
                 }
                 
                 
                 archive = Archive(buildings: buildings, all: allBuildings)
-                NSKeyedArchiver.archiveRootObject(archive, toFile: buildingsURL.path!)
+                NSKeyedArchiver.archiveRootObject(archive, toFile: buildingsURL.path)
                 
-                allKeys = Array(buildings.keys).sort()
+                allKeys = Array(buildings.keys).sorted()
         }
         
         for building in allBuildings {
@@ -95,7 +95,7 @@ class BuildingModel
     
     
     func saveArchive() {
-        NSKeyedArchiver.archiveRootObject(archive, toFile: buildingsURL.path!)
+        NSKeyedArchiver.archiveRootObject(archive, toFile: buildingsURL.path)
     }
     
     
@@ -106,19 +106,19 @@ class BuildingModel
         return allKeys.count
     }
     
-    func numberOfBuildingsInSection(section:Int) -> Int
+    func numberOfBuildingsInSection(_ section:Int) -> Int
     {
         let letter = allKeys[section]
         let buildingsWithThatLetter = buildings[letter]!
         return buildingsWithThatLetter.count
     }
     
-    func titleForSection(section:Int) -> String
+    func titleForSection(_ section:Int) -> String
     {
         return allKeys[section]
     }
     
-    func buildingAtIndexPath(indexPath:NSIndexPath) -> Building
+    func buildingAtIndexPath(_ indexPath:IndexPath) -> Building
     {
         let letter = allKeys[indexPath.section]
         let theBuildings = buildings[letter]!
@@ -131,19 +131,19 @@ class BuildingModel
     }
     
     
-    func pinToMap(building:Building)
+    func pinToMap(_ building:Building)
     {
         building.shouldBePinnedToMap = true
         saveArchive()
     }
     
-    func removePinFromMap(building:Building)
+    func removePinFromMap(_ building:Building)
     {
         building.shouldBePinnedToMap = false
         saveArchive()
     }
     
-    func addDataToBuilding(building:Building, data:NSData)
+    func addDataToBuilding(_ building:Building, data:Data)
     {
         building.imageData = data;
         saveArchive()
@@ -157,14 +157,14 @@ class BuildingModel
         return favoriteBuildings.count
     }
     
-    func favoriteBuildingAtIndex(index:Int) -> Building
+    func favoriteBuildingAtIndex(_ index:Int) -> Building
     {
         return favoriteBuildings[index]
     }
     
-    func addBuildingToFavorites(building:Building) ->Bool
+    func addBuildingToFavorites(_ building:Building) ->Bool
     {
-        if favoriteBuildings.contains({$0.name == building.name}) {
+        if favoriteBuildings.contains(where: {$0.name == building.name}) {
             return false
         }else {
             building.isFavorite = true
@@ -175,11 +175,11 @@ class BuildingModel
         }
     }
     
-    func removeFavoriteBuildingAtIndex(index:Int)
+    func removeFavoriteBuildingAtIndex(_ index:Int)
     {
         favoriteBuildings[index].isFavorite = false
         favoriteBuildings[index].shouldBePinnedToMap = false
-        favoriteBuildings.removeAtIndex(index)
+        favoriteBuildings.remove(at: index)
         saveArchive()
         
     }

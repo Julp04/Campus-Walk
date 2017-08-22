@@ -13,12 +13,12 @@ class SettingsViewController: UIViewController {
     
     @IBOutlet weak var segmentControl: UISegmentedControl!
     
-    let prefs = NSUserDefaults.standardUserDefaults()
+    let prefs = Foundation.UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        segmentControl.selectedSegmentIndex = prefs.integerForKey(UserDefaults.MapType)
+        segmentControl.selectedSegmentIndex = prefs.integer(forKey: UserDefaults.MapType)
 
         
     }
@@ -28,11 +28,11 @@ class SettingsViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    @IBAction func segmentControlChanged(sender: AnyObject) {
+    @IBAction func segmentControlChanged(_ sender: AnyObject) {
         
-        prefs.setInteger(segmentControl.selectedSegmentIndex, forKey: UserDefaults.MapType)
+        prefs.set(segmentControl.selectedSegmentIndex, forKey: UserDefaults.MapType)
     }
-    @IBAction func dismiss(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func dismiss(_ sender: AnyObject) {
+        self.dismiss(animated: true, completion: nil)
     }
 }

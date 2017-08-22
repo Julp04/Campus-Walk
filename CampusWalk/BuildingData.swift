@@ -21,9 +21,9 @@ class Building: MKPointAnnotation, NSCoding
     var shouldBePinnedToMap:Bool
     var isFavorite:Bool
     //Added imageData so if user selects new image for building it will be saved as data object and then the image can be persist while the app runs
-    var imageData:NSData?
+    var imageData:Data?
     
-    init(name:String, buildingCode:Int, year:Int, imageName:String, latitude:Double, longitude:Double, isFavorite:Bool?, shouldBePinnedToMap: Bool?, imageData:NSData?)
+    init(name:String, buildingCode:Int, year:Int, imageName:String, latitude:Double, longitude:Double, isFavorite:Bool?, shouldBePinnedToMap: Bool?, imageData:Data?)
     {
         self.name = name
         self.buildingCode = buildingCode
@@ -51,31 +51,31 @@ class Building: MKPointAnnotation, NSCoding
     }
     
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(name, forKey: BuildingKey.name)
-        aCoder.encodeInteger(year, forKey: BuildingKey.year)
-        aCoder.encodeObject(imageName, forKey: BuildingKey.imageName)
-        aCoder.encodeDouble(latitude, forKey: BuildingKey.latitude)
-        aCoder.encodeDouble(longitude, forKey: BuildingKey.longitude)
-        aCoder.encodeBool(shouldBePinnedToMap, forKey: BuildingKey.shouldBePinnedToMap)
-        aCoder.encodeBool(isFavorite, forKey: BuildingKey.isFavorite)
-        aCoder.encodeInteger(buildingCode, forKey: BuildingKey.buildingCode)
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(name, forKey: BuildingKey.name)
+        aCoder.encode(year, forKey: BuildingKey.year)
+        aCoder.encode(imageName, forKey: BuildingKey.imageName)
+        aCoder.encode(latitude, forKey: BuildingKey.latitude)
+        aCoder.encode(longitude, forKey: BuildingKey.longitude)
+        aCoder.encode(shouldBePinnedToMap, forKey: BuildingKey.shouldBePinnedToMap)
+        aCoder.encode(isFavorite, forKey: BuildingKey.isFavorite)
+        aCoder.encode(buildingCode, forKey: BuildingKey.buildingCode)
         
         if imageData != nil {
-            aCoder.encodeDataObject(imageData!)
+            aCoder.encode(imageData!)
         }
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let name = aDecoder.decodeObjectForKey(BuildingKey.name) as! String
-        let year = aDecoder.decodeIntegerForKey(BuildingKey.year)
-        let imageName = aDecoder.decodeObjectForKey(BuildingKey.imageName) as! String
-        let latitude = aDecoder.decodeDoubleForKey(BuildingKey.latitude)
-        let longitude = aDecoder.decodeDoubleForKey(BuildingKey.longitude)
-        let isFavorite = aDecoder.decodeBoolForKey(BuildingKey.isFavorite)
-        let shouldBePinnedToMap = aDecoder.decodeBoolForKey(BuildingKey.shouldBePinnedToMap)
-        let buildingCode = aDecoder.decodeIntegerForKey(BuildingKey.buildingCode)
-        let imageData = aDecoder.decodeDataObject()
+        let name = aDecoder.decodeObject(forKey: BuildingKey.name) as! String
+        let year = aDecoder.decodeInteger(forKey: BuildingKey.year)
+        let imageName = aDecoder.decodeObject(forKey: BuildingKey.imageName) as! String
+        let latitude = aDecoder.decodeDouble(forKey: BuildingKey.latitude)
+        let longitude = aDecoder.decodeDouble(forKey: BuildingKey.longitude)
+        let isFavorite = aDecoder.decodeBool(forKey: BuildingKey.isFavorite)
+        let shouldBePinnedToMap = aDecoder.decodeBool(forKey: BuildingKey.shouldBePinnedToMap)
+        let buildingCode = aDecoder.decodeInteger(forKey: BuildingKey.buildingCode)
+        let imageData = aDecoder.decodeData()
         
         self.init(name:name, buildingCode: buildingCode, year: year, imageName: imageName, latitude: latitude, longitude: longitude, isFavorite: isFavorite, shouldBePinnedToMap: shouldBePinnedToMap, imageData: imageData)
     }
@@ -95,20 +95,20 @@ class Archive : NSObject, NSCoding {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let buildings = aDecoder.decodeObjectForKey(ArchiveKey.buildings) as! BuildingDict
-        let allBuildings = aDecoder.decodeObjectForKey(ArchiveKey.allBuildings) as! [Building]
+        let buildings = aDecoder.decodeObject(forKey: ArchiveKey.buildings) as! BuildingDict
+        let allBuildings = aDecoder.decodeObject(forKey: ArchiveKey.allBuildings) as! [Building]
         self.init(buildings:buildings, all: allBuildings)
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(buildings, forKey: ArchiveKey.buildings)
-        aCoder.encodeObject(allBuildings, forKey: ArchiveKey.allBuildings)
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(buildings, forKey: ArchiveKey.buildings)
+        aCoder.encode(allBuildings, forKey: ArchiveKey.allBuildings)
     }
     
 }
 
 extension String {
     func firstLetter() -> String? {
-        return (self.isEmpty ? nil : self.substringToIndex(self.startIndex.successor()))
+        return (self.isEmpty ? nil : self.substring(to: self.characters.index(after: self.startIndex)))
     }
 }

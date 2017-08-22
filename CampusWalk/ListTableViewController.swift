@@ -23,18 +23,18 @@ class ListTableViewController: UITableViewController {
     
     // MARK: - Table view data source
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
 
             return buildingModel.numberOfBuildingSections()
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
             return buildingModel.numberOfBuildingsInSection(section)
     }
     
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("BuildingCell", forIndexPath: indexPath) as! BuildingCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildingCell", for: indexPath) as! BuildingCell
         
         
             
@@ -48,25 +48,25 @@ class ListTableViewController: UITableViewController {
     }
     
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
             return buildingModel.titleForSection(section)
     }
     
-    override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
             return buildingModel.indexTitle()
         
     }
     
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
             selectedBuilding = buildingModel.buildingAtIndexPath(indexPath)
-            performSegueWithIdentifier("DismissListSegue", sender: self)
+            performSegue(withIdentifier: "DismissListSegue", sender: self)
     }
     
     
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let directionsVC = segue.destinationViewController as? DirectionsViewController
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let directionsVC = segue.destination as? DirectionsViewController
         {
             directionsVC.setTextField(selectedBuilding!)
         }
