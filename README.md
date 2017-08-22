@@ -1,12 +1,13 @@
 # Campus-Walk
 App made in my CMPSC 475 iOS class at Penn State highlighting MapKit and Corelocation services
 
-
+#
 View list of Penn State Buildings, scroll through and select to see image and details of each one!
 
 <p align="center">
   <img src="https://github.com/Julp04/Campus-Walk/blob/master/campuswalk0.gif">
 </p>
+
 #
 Plot buildings on map to see them in reference to current location
 
